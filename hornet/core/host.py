@@ -54,7 +54,7 @@ class VirtualHost(object):
         self.network = network
         self.env = params['env']
 
-        valid_ips = map(str, network[1:-1])
+        valid_ips = list(map(str, network[1:-1]))
         if self.ip_address is None:
             logger.error('IP address for %s is not specified in the config file (or is "null")', self.hostname)
             if not self._set_ip_from_previous_run(fs_dir, valid_ips):
@@ -302,7 +302,7 @@ class VirtualHost(object):
         try:
             new_path_exists = self.filesystem.exists(cd_path)
         except IllegalBackReference as e:
-            logger.warn('Access to the external file system was attempted.')
+            logger.warning('Access to the external file system was attempted.')
             cd_path = '/'
             new_path_exists = True
         finally:

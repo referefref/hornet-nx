@@ -19,6 +19,7 @@
 
 import argparse
 import curses
+import curses.has_key
 
 import logging
 import socket
@@ -163,14 +164,14 @@ class Shell(TelnetHandler):
         for k in self.KEYS.keys():
             str_ = curses.tigetstr(curses.has_key._capability_names[k])
             if str_:
-                self.ESCSEQ[str_] = k
+                self.ESCSEQ[str_.decode('latin-1')] = k
         # Create a copy to prevent altering the class
         self.CODES = self.CODES.copy()
-        self.CODES['DEOL'] = curses.tigetstr('el')
-        self.CODES['DEL'] = curses.tigetstr('dch1')
-        self.CODES['INS'] = curses.tigetstr('ich1')
-        self.CODES['CSRLEFT'] = curses.tigetstr('cub1')
-        self.CODES['CSRRIGHT'] = curses.tigetstr('cuf1')
+        self.CODES['DEOL'] = (curses.tigetstr('el') or b'').decode('latin-1')
+        self.CODES['DEL'] = (curses.tigetstr('dch1') or b'').decode('latin-1')
+        self.CODES['INS'] = (curses.tigetstr('ich1') or b'').decode('latin-1')
+        self.CODES['CSRLEFT'] = (curses.tigetstr('cub1') or b'').decode('latin-1')
+        self.CODES['CSRRIGHT'] = (curses.tigetstr('cuf1') or b'').decode('latin-1')
 
     def inputcooker_store_queue(self, char):  # pragma: no cover
         """Put the cooked data in the input queue (no locking needed)"""
@@ -191,4 +192,4 @@ class Shell(TelnetHandler):
 
     def writecooked(self, text):
         TelnetHandler.writecooked(self, text)
-        self.session.last_activity = arrow.now().timestamp
+        self.session.last_activity = arrow.now().int_timestamp

@@ -1,3 +1,46 @@
+Adapted from https://github.com/czardoz/hornet by Aniket Panse (czardoz).
+
+=======================
+Hornet-nx
+=======================
+
+Hornet-nx is Hornet (last upstream commit b16ed6b, April 2018) migrated from Python 2 to
+Python 3 so that it installs and runs on current systems. The upstream code runs only on
+Python 2.7, and the telnetsrvlib revision it was written for (2014) is Python 2 only. The
+virtual hosts, commands, configuration file, database tables and log messages are unchanged.
+The original README follows below; its installation steps refer to the Python 2 version.
+
+Changes from the original
+==========================
+
+* Python 3 syntax and library names (``str`` for ``unicode``, ``dict.items()``,
+  ``urllib.parse``, ``time.perf_counter()``, ``stat.filemode``, a relative import in
+  ``hornet.core.db``, integer division for the ``ls -l`` block total, binary mode for
+  files saved by ``wget``).
+* telnetsrvlib 1.0.2 from PyPI (Python 3, LGPL, by Ian Epperson) instead of the 2014
+  revision from GitHub. The terminal type that paramiko passes as bytes is decoded, and
+  the terminal capability strings are decoded, as telnetsrvlib 1.0 does.
+* ``arrow`` 1.x: ``int_timestamp`` instead of the former ``timestamp`` property.
+* Session ids are stored as text, so any SQLAlchemy database works (the original relied
+  on the MySQL driver converting the UUID); for example
+  ``"database": "sqlite:////var/lib/hornet/hornet.db"`` needs no database server.
+* ``requirements.txt`` lists current versions (paramiko 5.1.0, gevent 26.9.0, fs 2.4.16,
+  SQLAlchemy 2.1.8); ``mysqlclient`` is optional.
+* ``bin/hornet`` runs with ``python3``. The original Dockerfile, supervisord file,
+  scripts and Travis configuration are kept unchanged for reference; they build the
+  Python 2 version. The unit tests have not been ported.
+
+Install and run with Python 3::
+
+    python3 -m venv venv
+    venv/bin/pip install .
+    mkdir ~/honeypot && cd ~/honeypot
+    ~/hornet-nx/venv/bin/hornet -v      # creates config.json; set "database", "host", "port"
+
+As in the original, the SSH host key is created on the first connection as a 1024-bit RSA
+key in the file named by ``key_file`` (``test_server.key``); an existing key file is used
+as it is.
+
 =======================
 Hornet
 =======================

@@ -15,10 +15,10 @@ setup(
     packages=find_packages(),
     include_package_data=True,
     zip_safe=False,
-    install_requires=open('requirements.txt').readlines(),
+    install_requires=[l.strip() for l in open('requirements.txt') if l.strip() and not l.startswith('#') and not l.startswith('nose')],
+    python_requires='>=3.9',
     test_suite='nose.collector',
     long_description=open('README.rst').read(),
     tests_require=['nose'],
     scripts=['bin/hornet'],
-    dependency_links=['git+https://github.com/ianepperson/telnetsrvlib.git#egg=telnetsrv-0.4.1']
 )

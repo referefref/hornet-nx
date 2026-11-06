@@ -33,7 +33,7 @@ with open(os.path.join(os.path.dirname(hornet.__file__), 'data',
                        'linux_fs_list.txt')) as fslist:
     for line in fslist:
         line = line.strip()
-        directories.append(unicode(line))
+        directories.append(str(line))
 
 
 class SandboxedFS(OSFS):
@@ -49,8 +49,8 @@ class SandboxedFS(OSFS):
                     logging.debug('Directory creation skipped for: %s', each)
 
     def isfile(self, path):
-        if not isinstance(path, unicode):
-            path = unicode(path)
+        if not isinstance(path, str):
+            path = str(path)
         return super(SandboxedFS, self).isfile(path)
 
     def open(self,
@@ -62,34 +62,34 @@ class SandboxedFS(OSFS):
              newline='',
              line_buffering=False,
              **options):
-        if not isinstance(path, unicode):
-            path = unicode(path)
+        if not isinstance(path, str):
+            path = str(path)
         logging.debug('Opening a new path: {}, mode={}'.format(path, mode))
         return super(SandboxedFS, self).open(
             path, mode, buffering, encoding, errors, newline, **options
         )
 
     def exists(self, path):
-        if not isinstance(path, unicode):
-            path = unicode(path)
+        if not isinstance(path, str):
+            path = str(path)
         return super(SandboxedFS, self).exists(path)
 
     def makedir(self, path, permissions=None, recreate=False):
-        if not isinstance(path, unicode):
-            path = unicode(path)
+        if not isinstance(path, str):
+            path = str(path)
         return super(SandboxedFS, self).makedir(path, permissions, recreate)
 
     def create(self, path, wipe=False):
-        if not isinstance(path, unicode):
-            path = unicode(path)
+        if not isinstance(path, str):
+            path = str(path)
         return super(SandboxedFS, self).create(path, wipe)
 
     def listdir(self, path='/'):
-        if not isinstance(path, unicode):
-            path = unicode(path)
+        if not isinstance(path, str):
+            path = str(path)
         return super(SandboxedFS, self).listdir(path)
 
     def isdir(self, path):
-        if not isinstance(path, unicode):
-            path = unicode(path)
+        if not isinstance(path, str):
+            path = str(path)
         return super(SandboxedFS, self).isdir(path)

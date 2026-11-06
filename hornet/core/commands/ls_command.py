@@ -21,7 +21,7 @@ import logging
 import os
 import time
 
-from tarfile import filemode  # Coverts file/directory mode into the ls format (e.g drwxr-xr-x)
+from stat import filemode  # Coverts file/directory mode into the ls format (e.g drwxr-xr-x)
 from fs.errors import IllegalBackReference
 
 logger = logging.getLogger(__name__)
@@ -31,7 +31,7 @@ class _PathInfo(object):
 
     def __init__(self, path, total, output, path_exists, is_dir):
         self.path = path
-        self.total = total / 2
+        self.total = total // 2
         self.path_output = output
         self.path_exists = path_exists
         self.is_dir = is_dir
@@ -51,7 +51,7 @@ class LsCommand(object):
                 normalized_path = os.path.normpath(os.path.join(self.working_path, p))
                 self._process_path(normalized_path, key_path=p)
             except IllegalBackReference as e:
-                logger.warn('Access to the external file system was attempted.')
+                logger.warning('Access to the external file system was attempted.')
                 new_path = os.path.join(self.working_path, p.lstrip('../'))
                 self._process_path(new_path, key_path=p)
         result = ''
@@ -152,7 +152,7 @@ class LsCommand(object):
             path_info = _PathInfo(path, total, path_output, exists, is_directory)
             self._add_path_output(path_info, key_path)
         else:
-            if self.filesystem.isdir(unicode(path)):
+            if self.filesystem.isdir(str(path)):
                 # Process all files one by one, adding to the output list
                 exists = True
                 total = 0

@@ -29,17 +29,17 @@ class Session(object):
 
     def __init__(self, client_address, session_q):
         self.id = uuid.uuid4()
-        self.start_time = arrow.now().timestamp
+        self.start_time = arrow.now().int_timestamp
         self.end_time = None
         self.client_address = client_address
         self.session_q = session_q
-        self.last_activity = arrow.now().timestamp
+        self.last_activity = arrow.now().int_timestamp
         self.watcher_greenlet = gevent.spawn(self.watch)
 
     def watch(self, max_diff=60):
         logger.debug('Started watching %s', self)
         while True:
-            diff = arrow.now().timestamp - self.last_activity
+            diff = arrow.now().int_timestamp - self.last_activity
             if diff > max_diff:
                 self.finish()
                 break

@@ -20,7 +20,7 @@
 import logging
 import os
 import random
-import urlparse
+import urllib.parse as urlparse
 import gevent
 import requests
 import requests.exceptions
@@ -82,8 +82,8 @@ class WgetCommand(object):
         self._write_connection_info()
 
         output_path = os.path.join(self.working_path, self.outputfile)
-        with open(self.filesystem.getsyspath(output_path), 'w') as output:
-            self.start_time = time.clock()
+        with open(self.filesystem.getsyspath(output_path), 'wb') as output:
+            self.start_time = time.perf_counter()
             with closing(self.session.get(self.url, stream=True)) as response:
                 progress_greenlet = gevent.spawn(self._render_progressbar)
                 logger.debug('Progress greenlet started')
@@ -162,7 +162,7 @@ class WgetCommand(object):
             self.shell.updateline(self._get_progressbar())
             gevent.sleep(0.3)
         # Update one last time to show 100% progress
-        self.shell.updateline('{}  in {:.2f}s'.format(self._get_progressbar(), time.clock()-self.start_time))
+        self.shell.updateline('{}  in {:.2f}s'.format(self._get_progressbar(), time.perf_counter()-self.start_time))
         self.shell.writeline('')
 
     def _get_progressbar(self):
@@ -170,7 +170,7 @@ class WgetCommand(object):
         done = int(percent * self.progressbar_size)
         not_done = self.progressbar_size - done
 
-        elapsed_time = time.clock() - self.start_time
+        elapsed_time = time.perf_counter() - self.start_time
         speed = human_readable(self.currently_downloaded / elapsed_time, suffix='B/s')
         return self.PROGRESS_BAR.format(
             percent,

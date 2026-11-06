@@ -42,7 +42,7 @@ class AttackCommand(Base):
     __tablename__ = 'attackcommand'
 
     id = Column(Integer, autoincrement=True, primary_key=True)
-    time = Column(Integer, default=lambda: arrow.now().timestamp)
+    time = Column(Integer, default=lambda: arrow.now().int_timestamp)
     command = Column(String(2048))
     host = Column(String(2048))
     output = Column(UnicodeText)

@@ -22,7 +22,7 @@ from contextlib import contextmanager
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-from models import AttackCommand, AttackSession, Base
+from .models import AttackCommand, AttackSession, Base
 
 logger = logging.getLogger(__name__)
 
@@ -42,14 +42,14 @@ class DatabaseHandler(object):
         logger.debug('Creating new attack session, %s - start-time: %s remote-addr: %s',
                      session.id, session.start_time, session.client_address)
         with self.session_context() as dbsession:
-            attack_session = AttackSession(start_time=session.start_time, id=session.id,
+            attack_session = AttackSession(start_time=session.start_time, id=str(session.id),
                                            source_ip=session.client_address[0], source_port=session.client_address[1])
             dbsession.add(attack_session)
 
     def create_attack_command(self, attack_session_id, command, host):
         logger.debug('Adding a new attack command (%s) to session %s.', command, attack_session_id)
         with self.session_context() as dbsession:
-            attack_session = dbsession.query(AttackSession).filter_by(id=attack_session_id).one()
+            attack_session = dbsession.query(AttackSession).filter_by(id=str(attack_session_id)).one()
             attack_command = AttackCommand(command=command, host=host.hostname, session_id=attack_session.id)
             attack_session.commands.append(attack_command)
 

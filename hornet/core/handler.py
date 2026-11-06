@@ -73,7 +73,7 @@ class _SSHHandler(SSHHandler):
 
     def authCallback(self, username, password):
         default = None
-        for hostname, host in self.vhosts.iteritems():
+        for hostname, host in self.vhosts.items():
             if host.default:
                 default = host
         if default.authenticate(username, password):
@@ -104,7 +104,7 @@ class _SSHHandler(SSHHandler):
         request = self.dummy_request()
         request._sock = channel
         request.modes = modes
-        request.term = term
+        request.term = term.decode('latin-1') if isinstance(term, bytes) else term
         request.username = self.username
 
         # This should block until the user quits the pty
